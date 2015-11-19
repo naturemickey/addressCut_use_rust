@@ -1,0 +1,4 @@
+[package]
+name = "addresscut"
+version = "0.1.0"
+authors = ["Michael Chow <mickey_zhouyou@yeah.net>"]
