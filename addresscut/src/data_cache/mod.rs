@@ -1,6 +1,6 @@
 
 mod base_data;
 
-fn im() {
+pub fn im() {
 	let ac = base_data::all_citys();
 }

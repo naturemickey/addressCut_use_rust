@@ -1,4 +1,10 @@
 
+
+use std::error::Error;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
+
 pub struct City {
 	id:i16,
 	pid:i16,
@@ -13,5 +19,20 @@ pub fn all_citys() -> Vec<City> {
 	citys.push(City{id:3, pid:2, lvl:3, names:vec!["碌曲".to_string(), "碌曲县".to_string()]});
 	citys.push(City{id:4, pid:3, lvl:4, names:vec!["玛艾".to_string(), "玛艾镇".to_string()]});
 	citys.push(City{id:5, pid:3, lvl:4, names:vec!["阿拉".to_string(), "阿拉乡".to_string()]});
+
+    let path = Path::new("citybasedata.config");
+    let display = path.display();
+
+    let mut file = match File::open(&path) {
+        Err(why) => panic!("couldn't open {}: {}", display, Error::description(&why)),
+        Ok(file) => file,
+    };
+
+    let mut s = String::new();
+    match file.read_to_string(&mut s) {
+        Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
+        Ok(_) => print!("{} contains:\n{}", display, s),
+    }
+
 	citys
 }
