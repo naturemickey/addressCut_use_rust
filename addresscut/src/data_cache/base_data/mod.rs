@@ -31,7 +31,7 @@ pub fn all_citys() -> Vec<City> {
     let mut s = String::new();
     match file.read_to_string(&mut s) {
         Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
-        Ok(_) => print!("{} contains:\n{}", display, s),
+        Ok(cs) => print!("{} contains:\n{}", display, cs),
     }
 
 	citys
