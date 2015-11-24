@@ -7,10 +7,10 @@ use std::option::Option::{None, Some};
 use std::str::FromStr;
 
 pub struct City {
-	id:i32,
-	pid:i32,
-	lvl:i8,
-	names:Vec<String>
+	pub id:i32,
+	pub pid:i32,
+	pub lvl:i8,
+	pub names:Vec<String>
 }
 impl City {
 	pub fn to_string(&self) -> String {
@@ -62,7 +62,7 @@ pub fn all_citys() -> Vec<City> {
 
 fn str_to_int<T: FromStr>(s: &str) -> T {
 	match T::from_str(s) {
-		Err(why) => panic!("couldn't convert {}", s),
+		Err(_) => panic!("couldn't convert {}", s),
 		Ok(_i) => _i,
 	}
 }
