@@ -4,6 +4,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::option::Option::{None, Some};
 
 pub struct City {
 	id:i16,
@@ -31,8 +32,22 @@ pub fn all_citys() -> Vec<City> {
     let mut s = String::new();
     match file.read_to_string(&mut s) {
         Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
-        Ok(cs) => print!("{} contains:\n{}", display, cs),
+        Ok(cs) => print!("{} size:\n{}", display, cs)
     }
+
+	let lines:Vec<&str> = s.lines().collect();
+	for line in lines {
+		let ss:Vec<&str> = line.split(',').collect();
+		// for s in ss {
+		// 	println!("{}", s);
+		// }
+		for i in 0..ss.len() {
+			match ss.get(i) {
+				None => println!("error"),
+				Some(s) => println!("{}", s)
+			}
+		}
+	}
 
 	citys
 }
