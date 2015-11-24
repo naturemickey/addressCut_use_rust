@@ -12,15 +12,14 @@ pub struct City {
 	lvl:i8,
 	names:Vec<String>
 }
+impl City {
+	pub fn to_string(&self) -> String {
+		format!("{},{},{},{:?}", self.id, self.pid, self.lvl, self.names)
+	}
+}
 
 pub fn all_citys() -> Vec<City> {
 	let mut citys:Vec<City> = vec![];
-	citys.push(City{id:1, pid:0, lvl:1, names:vec!["甘肃".to_string(), "甘肃省".to_string()]});
-	citys.push(City{id:2, pid:1, lvl:2, names:vec!["甘南藏族".to_string(), "甘南藏族自治州".to_string(), "甘南".to_string(), "甘南自治州".to_string()]});
-	citys.push(City{id:3, pid:2, lvl:3, names:vec!["碌曲".to_string(), "碌曲县".to_string()]});
-	citys.push(City{id:4, pid:3, lvl:4, names:vec!["玛艾".to_string(), "玛艾镇".to_string()]});
-	citys.push(City{id:5, pid:3, lvl:4, names:vec!["阿拉".to_string(), "阿拉乡".to_string()]});
-
     let path = Path::new("citybasedata.config");
     let display = path.display();
 
@@ -38,13 +37,13 @@ pub fn all_citys() -> Vec<City> {
 	let lines:Vec<&str> = s.lines().collect();
 	for line in lines {
 		let ss:Vec<&str> = line.split(',').collect();
-		let mut _id:i32;
-		let mut _pid:i32;
-		let mut _lvl:i8;
+		let mut _id:i32 = 0;
+		let mut _pid:i32 = 0;
+		let mut _lvl:i8 = 0;
 		let mut _names:Vec<String> = Vec::new();
 		for i in 0 .. ss.len() {
 			match ss.get(i) {
-				None => println!("error"),
+				None => panic!("couldn't be happen!"),
 				Some(s) => {
 					match i {
 						0 => _id = str_to_int::<i32>(s),
@@ -55,6 +54,7 @@ pub fn all_citys() -> Vec<City> {
 				}
 			}
 		}
+		citys.push(City{id:_id, pid:_pid, lvl:_lvl, names:_names});
 	}
 
 	citys
