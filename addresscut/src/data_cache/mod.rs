@@ -3,24 +3,27 @@ mod base_data;
 
 use std::collections::HashMap;
 use std::option::Option::{None, Some};
+use std::option::Option;
+
+fn insert_to_name_map(nameMap:&mut HashMap<String, Vec<i32> >, name:&str, id:i32) {
+	match nameMap.get_mut(name) {
+		None => {
+			let mut v = Vec::new();
+			v.push(id);
+			nameMap.insert(name.to_string(), v);
+		}
+		Some(v) => {
+			v.push(id);
+		}
+	}
+}
 
 pub fn im() {
 	let ac = base_data::all_citys();
-	let mut nameMap = HashMap::new();
-	for c in ac {
+	let mut nameMap:HashMap<String, Vec<i32> > = HashMap::new();
+	for c in &ac {
 		for name in &c.names {
-			let mut b = false;
-			let mut idvec:&mut Vec<i32> = match nameMap.get_mut(name) {
-				None => {
-					b = true;
-					Vec::new()
-				}
-				Some(v) => v
-			};
-			idvec.push(c.id);
-			if b {
-				nameMap.insert(name.to_string(), idvec);
-			}
+			insert_to_name_map(&mut nameMap, name, c.id);
 		}
 	}
 }
