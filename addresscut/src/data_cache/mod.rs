@@ -2,15 +2,14 @@
 mod base_data;
 
 use std::collections::HashMap;
-use std::option::Option::{None, Some};
-use std::option::Option;
+//use std::option::Option::{None, Some};
 
 pub fn im() {
 	let ac = base_data::all_citys();
-	let mut nameMap = HashMap::new();
+	let mut name_map = HashMap::new();
 	for c in &ac {
 		for name in &c.names {
-			nameMap.entry(name.to_string()).or_insert(Vec::new()).push(c.id);
+			name_map.entry(name.to_string()).or_insert(Vec::new()).push(c.id);
 		}
 	}
 }
