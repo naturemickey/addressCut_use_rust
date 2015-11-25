@@ -12,11 +12,6 @@ pub struct City {
 	pub lvl:i8,
 	pub names:Vec<String>
 }
-impl City {
-	pub fn to_string(&self) -> String {
-		format!("{},{},{},{:?}", self.id, self.pid, self.lvl, self.names)
-	}
-}
 
 pub fn all_citys() -> Vec<City> {
 	let mut citys:Vec<City> = vec![];
