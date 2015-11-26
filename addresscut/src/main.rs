@@ -1,8 +1,8 @@
 
 extern crate addresscut;
 
-use addresscut::data_cache;
+use addresscut::dfa;
 
 fn main() {
-    data_cache::im();
+    dfa::scan();
 }
