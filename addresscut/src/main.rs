@@ -1,8 +1,8 @@
 
 extern crate addresscut;
 
-use addresscut::dfa;
+use addresscut::dfa::DFA;
 
 fn main() {
-    dfa::scan();
+    DFA::new().scan("abc");
 }
