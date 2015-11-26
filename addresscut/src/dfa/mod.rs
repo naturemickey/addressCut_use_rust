@@ -52,12 +52,27 @@ impl DFA {
 		dfa
 	}
 	pub fn scan(&self, s:&str) -> Vec<String> {
-		let chars:Vec<char> = s.chars().collect();
-		self.scan_recur(s, &chars, 0, 0, &self.start_state, &self.start_state, Vec::new())
+		let res = Vec::new();
+		let chars = s.chars().collect();
+		self.scan_recur(&chars, 0, 0, 0, &self.start_state, &self.start_state, &res);
+		res
 	}
 	fn scan_recur(&self,
-		s:&str, bl:&Vec<char>, from_idx:usize, currect_accepted_idx:usize,
-		current_state:&DfaState, current_accepted:&DfaState, res:Vec<String>) -> Vec<String> {
-		res
+		chars:&Vec<char>, from_idx:usize, current_idx:usize, currect_accepted_idx:usize,
+		current_state:&DfaState, current_accepted:&DfaState, res:&Vec<String>) {
+		let len = chars.len();
+		if (current_idx < len) {unsafe{
+			let ch = chars.get_unchecked(current_idx);
+			match current_state.tran(&ch) {
+				None => {
+					
+				} 
+				Some(cs) => if current_idx + 1 == len {
+					
+				} else if cs.is_accepted() {
+					self.scan_recur(chars, from_idx, current_idx + 1, current_idx, cs, cs, res);
+				}
+			}
+		}}
 	}
 }
