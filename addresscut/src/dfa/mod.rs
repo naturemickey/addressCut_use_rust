@@ -64,9 +64,10 @@ impl DfaState {
 				let mut sv2 = Vec::new();
 				sv2.push("".to_string());
 				sv2.push("".to_string());
-				for s in sv {
-					sv2.push(s.to_string());
-				}
+				sv2.extend(sv.iter().cloned());
+				// for s in sv {
+				// 	sv2.push(s.to_string());
+				// }
 				vv.push(sv2);
 			}
 		}
@@ -99,10 +100,9 @@ impl DFA {
 		};
 		println!("++++++++++++++++");
 	}
-	pub fn scan(&self, s:&str) -> Vec<String> {
+	pub fn scan(&self, chars:&Vec<char>) -> Vec<String> {
 		let mut res = Vec::new();
-		let chars = s.chars().collect();
-		self.scan_recur(&chars, 0, 0, 0, &self.start_state, &self.start_state, &mut res);
+		self.scan_recur(chars, 0, 0, 0, &self.start_state, &self.start_state, &mut res);
 		res
 	}
 	fn scan_recur(&self,
