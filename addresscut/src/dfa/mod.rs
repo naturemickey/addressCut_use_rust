@@ -1,5 +1,5 @@
 
-mod data_cache;
+pub mod data_cache;
 
 use std::collections::HashMap;
 use std::option::Option;
@@ -77,8 +77,8 @@ impl DfaState {
 
 pub struct DFA {
 	start_state:DfaState,
-	citys:Vec<City>,
-	name_map:HashMap<String, Vec<i32>>
+	pub citys:Vec<City>,
+	pub name_map:HashMap<String, Vec<i32>>
 }
 
 impl DFA {
