@@ -26,7 +26,7 @@ pub fn all_citys() -> Vec<City> {
     let mut s = String::new();
     match file.read_to_string(&mut s) {
         Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
-        Ok(cs) => print!("{} size:\n{}", display, cs)
+        Ok(cs) => println!("{} size:\n{}", display, cs)
     }
 
 	let lines:Vec<&str> = s.lines().collect();
