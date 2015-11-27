@@ -78,7 +78,7 @@ impl DfaState {
 pub struct DFA {
 	start_state:DfaState,
 	pub citys:Vec<City>,
-	pub name_map:HashMap<String, Vec<i32>>
+	pub name_map:HashMap<String, Vec<usize>>
 }
 
 impl DFA {

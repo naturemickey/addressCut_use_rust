@@ -7,8 +7,8 @@ use std::option::Option::{None, Some};
 use std::str::FromStr;
 
 pub struct City {
-	pub id:i32,
-	pub pid:i32,
+	pub id:usize,
+	pub pid:usize,
 	pub lvl:i8,
 	pub names:Vec<String>
 }
@@ -32,8 +32,8 @@ pub fn all_citys() -> Vec<City> {
 	let lines:Vec<&str> = s.lines().collect();
 	for line in lines {
 		let ss:Vec<&str> = line.split(',').collect();
-		let mut _id:i32 = 0;
-		let mut _pid:i32 = 0;
+		let mut _id:usize = 0;
+		let mut _pid:usize = 0;
 		let mut _lvl:i8 = 0;
 		let mut _names:Vec<String> = Vec::new();
 		for i in 0 .. ss.len() {
@@ -41,8 +41,8 @@ pub fn all_citys() -> Vec<City> {
 				None => panic!("couldn't be happen!"),
 				Some(s) => {
 					match i {
-						0 => _id = str_to_int::<i32>(s),
-						1 => _pid = str_to_int::<i32>(s),
+						0 => _id = str_to_int::<usize>(s),
+						1 => _pid = str_to_int::<usize>(s),
 						2 => _lvl = str_to_int::<i8>(s),
 						_ => _names.push(s.to_string()),
 					}

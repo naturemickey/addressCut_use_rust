@@ -4,8 +4,6 @@ pub mod dfa;
 use self::dfa::DFA;
 use self::dfa::data_cache::base_data::City;
 use std::collections::HashMap;
-use std::option::Option;
-use std::option::Option::{None, Some};
 
 pub struct AddressScanner {
 	dfa:DFA
@@ -34,19 +32,48 @@ impl AddressScanner {
 			res.extend(addr_list.iter().cloned());
 		}}
 		let citys:&Vec<City> = &self.dfa.citys;
-		let name_map:&HashMap<String, Vec<i32>> = &self.dfa.name_map;
+		let name_map:&HashMap<String, Vec<usize>> = &self.dfa.name_map;
 		let tree = make_tree(&addr_list, citys, name_map);
 		res
 	}
 }
 
-fn make_tree<'a>(addr_list:&Vec<String>, citys:&Vec<City>, name_map:&HashMap<String, Vec<i32>>) -> Vec<AddrNode<'a>> {
+fn make_tree<'a>(addr_list:&Vec<String>, citys:&Vec<City>, name_map:&HashMap<String, Vec<usize>>) -> Vec<AddrNode<'a>> {
 	if addr_list.len() == 0 {
 		Vec::new()
 	} else {
 		let mut res = Vec::new();
+		for addr in addr_list {
+			if let Some(ids) = name_map.get(addr) {
+				for id in ids { unsafe {
+					let city = citys.get_unchecked(id - 1);
+					res = add_2_tree(&mut res, city);
+				}}
+			}
+		}
 		res
 	}
+}
+
+fn add_2_tree<'a>(tree:&Vec<AddrNode<'a>>, city:&City) -> Vec<AddrNode<'a>> {
+	Vec::new()
+}
+
+fn get_relationship(ct1:&City, ct2:&City, citys:&Vec<City>) -> i8 {
+	if ct1.lvl == ct2.lvl {
+		return 0;
+	} if ct1.lvl > ct2.lvl {
+		return -1 * get_relationship(ct2, ct1, citys);
+	}
+	let mut ct = ct2;
+	while (ct1.lvl < ct.lvl) && (ct.pid != 0) { unsafe {
+		let ctp = citys.get_unchecked(ct.pid - 1);
+		if ctp.id == ct1.id {
+			return 1;
+		}
+		ct = ctp;
+	}}
+	return 0;
 }
 
 struct AddrNode<'a> {

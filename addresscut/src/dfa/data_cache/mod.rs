@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use self::base_data::City;
 //use std::option::Option::{None, Some};
 
-pub fn assemble_data() -> (Vec<City>, HashMap<String, Vec<i32>>) {
+pub fn assemble_data() -> (Vec<City>, HashMap<String, Vec<usize>>) {
 	let ac = base_data::all_citys();
 	let mut name_map = HashMap::new();
 	for c in &ac {
