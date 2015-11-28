@@ -33,9 +33,13 @@ impl AddressScanner {
 		}}
 		let citys:&Vec<City> = &self.dfa.citys;
 		let name_map:&HashMap<String, Vec<usize>> = &self.dfa.name_map;
+		println!('a');
 		let tree = make_tree(&addr_list, citys, name_map);
+		println!('b');
 		let vv = break_tree(&tree);
+		println!('c');
 		print_anvv(&vv);
+		println!('d');
 		res
 	}
 }
@@ -81,7 +85,9 @@ fn make_tree<'a>(addr_list:&'a Vec<String>, citys:&'a Vec<City>, name_map:&HashM
 			if let Some(ids) = name_map.get(addr) {
 				for id in ids { unsafe {
 					let city = citys.get_unchecked(id - 1);
+					println!("a1:{}", addr);
 					add_2_tree(&mut res, city, citys, addr);
+					println!("a2");
 				}}
 			}
 		}
