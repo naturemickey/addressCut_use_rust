@@ -47,7 +47,7 @@ fn make_tree<'a>(addr_list:&Vec<String>, citys:&Vec<City>, name_map:&HashMap<Str
 			if let Some(ids) = name_map.get(addr) {
 				for id in ids { unsafe {
 					let city = citys.get_unchecked(id - 1);
-					res = add_2_tree(&mut res, city);
+					res = add_2_tree(&mut res, city, citys);
 				}}
 			}
 		}
@@ -55,8 +55,23 @@ fn make_tree<'a>(addr_list:&Vec<String>, citys:&Vec<City>, name_map:&HashMap<Str
 	}
 }
 
-fn add_2_tree<'a>(tree:&Vec<AddrNode<'a>>, city:&City) -> Vec<AddrNode<'a>> {
-	Vec::new()
+fn add_2_tree<'a>(tree:&Vec<AddrNode<'a>>, city:&City, citys:&Vec<City>) -> Vec<AddrNode<'a>> {
+	let mut res = Vec::new();
+	let has_relationship = false;
+	for node in tree {
+		if has_relationship {
+			res.push(*node);
+		} else if node.city.id != city.id {
+			let relationship = get_relationship(city, node.city, citys);
+			if relationship != 0 {
+				has_relationship = true;
+				if relationship > 0 {
+				} else {
+				}
+			}
+		}
+	}
+	res
 }
 
 fn get_relationship(ct1:&City, ct2:&City, citys:&Vec<City>) -> i8 {
