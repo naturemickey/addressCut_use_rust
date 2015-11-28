@@ -74,7 +74,7 @@ fn add_2_tree<'a>(tree:&mut Vec<AddrNode<'a>>, city:&'a City, citys:&'a Vec<City
 		}
 	}}
 	if replace_idx >= 0 { unsafe {
-		let mut an = AddrNode{city:city, children:Vec::with_capacity(1)};
+		let an = AddrNode{city:city, children:Vec::with_capacity(1)};
 		tree.push(an);
 		let c = tree.swap_remove(replace_idx as usize);
 		tree.get_unchecked_mut(replace_idx as usize).children.push(c);
