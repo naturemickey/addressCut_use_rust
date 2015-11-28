@@ -38,7 +38,7 @@ impl AddressScanner {
 	}
 }
 
-fn make_tree<'a>(addr_list:&Vec<String>, citys:&Vec<City>, name_map:&HashMap<String, Vec<usize>>) -> Vec<AddrNode<'a>> {
+fn make_tree<'a>(addr_list:&Vec<String>, citys:&'a Vec<City>, name_map:&HashMap<String, Vec<usize>>) -> Vec<AddrNode<'a>> {
 	if addr_list.len() == 0 {
 		Vec::new()
 	} else {
@@ -47,7 +47,7 @@ fn make_tree<'a>(addr_list:&Vec<String>, citys:&Vec<City>, name_map:&HashMap<Str
 			if let Some(ids) = name_map.get(addr) {
 				for id in ids { unsafe {
 					let city = citys.get_unchecked(id - 1);
-					res = add_2_tree(&mut res, city, citys);
+					add_2_tree(&mut res, city, citys);
 				}}
 			}
 		}
@@ -55,23 +55,33 @@ fn make_tree<'a>(addr_list:&Vec<String>, citys:&Vec<City>, name_map:&HashMap<Str
 	}
 }
 
-fn add_2_tree<'a>(tree:&Vec<AddrNode<'a>>, city:&City, citys:&Vec<City>) -> Vec<AddrNode<'a>> {
-	let mut res = Vec::new();
-	let has_relationship = false;
-	for node in tree {
-		if has_relationship {
-			res.push(*node);
-		} else if node.city.id != city.id {
+fn add_2_tree<'a>(tree:&mut Vec<AddrNode<'a>>, city:&'a City, citys:&'a Vec<City>) {
+	let mut has_relationship = false;
+	let mut replace_idx:i32 = -1;
+	for i in 0 .. tree.len() { unsafe {
+		let node = tree.get_unchecked_mut(i);
+		if node.city.id != city.id {
 			let relationship = get_relationship(city, node.city, citys);
 			if relationship != 0 {
 				has_relationship = true;
 				if relationship > 0 {
+					replace_idx = i as i32;
 				} else {
+					add_2_tree(&mut node.children, city, citys);
 				}
+				break;
 			}
 		}
+	}}
+	if replace_idx >= 0 { unsafe {
+		let mut an = AddrNode{city:city, children:Vec::with_capacity(1)};
+		tree.push(an);
+		let c = tree.swap_remove(replace_idx as usize);
+		tree.get_unchecked_mut(replace_idx as usize).children.push(c);
+	}}
+	if !has_relationship {
+		tree.push(AddrNode{city:city, children:Vec::new()});
 	}
-	res
 }
 
 fn get_relationship(ct1:&City, ct2:&City, citys:&Vec<City>) -> i8 {
