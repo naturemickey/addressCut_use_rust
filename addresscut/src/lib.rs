@@ -33,13 +33,9 @@ impl AddressScanner {
 		}}
 		let citys:&Vec<City> = &self.dfa.citys;
 		let name_map:&HashMap<String, Vec<usize>> = &self.dfa.name_map;
-		println!('a');
 		let tree = make_tree(&addr_list, citys, name_map);
-		println!('b');
 		let vv = break_tree(&tree);
-		println!('c');
 		print_anvv(&vv);
-		println!('d');
 		res
 	}
 }
@@ -64,7 +60,7 @@ fn break_tree<'a>(tree:&'a Vec<AddrNode<'a>>) -> Vec<Vec<&'a AddrNode<'a>>> {
 			res.push(v);
 		} else {
 			for v in &mut vv {
-				let mut v1:Vec<&'a AddrNode<'a>> = Vec::new();
+				let mut v1:Vec<&'a AddrNode<'a>> = Vec::with_capacity(1 + v.len());
 				v1.push(an);
 				for n in v {
 					v1.push(n);
@@ -85,9 +81,7 @@ fn make_tree<'a>(addr_list:&'a Vec<String>, citys:&'a Vec<City>, name_map:&HashM
 			if let Some(ids) = name_map.get(addr) {
 				for id in ids { unsafe {
 					let city = citys.get_unchecked(id - 1);
-					println!("a1:{} {}", addr, id);
 					add_2_tree(&mut res, city, citys, addr);
-					println!("a2");
 				}}
 			}
 		}
@@ -98,7 +92,6 @@ fn make_tree<'a>(addr_list:&'a Vec<String>, citys:&'a Vec<City>, name_map:&HashM
 fn add_2_tree<'a>(tree:&mut Vec<AddrNode<'a>>, city:&'a City, citys:&'a Vec<City>, addr:&'a str) {
 	let mut has_relationship = false;
 	let mut replace_idx:i32 = -1;
-	println!("add_2_tree, aa0, {}", addr);
 	for i in 0 .. tree.len() { unsafe {
 		let node = tree.get_unchecked_mut(i);
 		if node.city.id != city.id {
@@ -114,18 +107,15 @@ fn add_2_tree<'a>(tree:&mut Vec<AddrNode<'a>>, city:&'a City, citys:&'a Vec<City
 			}
 		}
 	}}
-	println!("add_2_tree, aa1, {}", addr);
 	if replace_idx >= 0 { unsafe {
 		let an = AddrNode{city:city, addr:addr, children:Vec::with_capacity(1)};
 		tree.push(an);
 		let c = tree.swap_remove(replace_idx as usize);
 		tree.get_unchecked_mut(replace_idx as usize).children.push(c);
 	}}
-	println!("add_2_tree, aa2, {}", addr);
 	if !has_relationship {
 		tree.push(AddrNode{city:city, addr:addr, children:Vec::new()});
 	}
-	println!("add_2_tree, aa3, {}", addr);
 }
 
 fn get_relationship(ct1:&City, ct2:&City, citys:&Vec<City>) -> i8 {
@@ -135,16 +125,13 @@ fn get_relationship(ct1:&City, ct2:&City, citys:&Vec<City>) -> i8 {
 		return -1 * get_relationship(ct2, ct1, citys);
 	}
 	let mut ct = ct2;
-	println!("x1");
 	while (ct1.lvl < ct.lvl) && (ct.pid != 0) { unsafe {
 		let ctp = citys.get_unchecked(ct.pid - 1);
 		if ctp.id == ct1.id {
 			return 1;
 		}
-		println!("xx, {}", ctp.id);
 		ct = ctp;
 	}}
-	println!("x2");
 	return 0;
 }
 
