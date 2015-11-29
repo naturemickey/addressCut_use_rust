@@ -4,6 +4,7 @@ pub mod dfa;
 use self::dfa::DFA;
 use self::dfa::data_cache::base_data::City;
 use std::collections::HashMap;
+use std::result::Result::{Ok, Err};
 
 pub struct AddressScanner {
 	dfa:DFA
@@ -40,7 +41,7 @@ impl AddressScanner {
 	}
 }
 
-fn choose<'a>(mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usize) -> Vec<&'a AddrNode<'a>> {
+fn choose<'a>(addr_list:&Vec<String>, mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usize) -> Vec<&'a AddrNode<'a>> {
 	if vv.len() == 0 {
 		return Vec::new();
 	}
@@ -49,6 +50,7 @@ fn choose<'a>(mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usize) -> Vec<&'a AddrNode<
 	}
 	let mut len = vv.len();
 	let mut res1:Vec<Vec<&'a AddrNode<'a>>> = Vec::new();
+	let mut res1_max_len:usize = 0;
 	while len > 0 {
 		len -= 1;
 		let v = vv.remove(len);
@@ -59,8 +61,14 @@ fn choose<'a>(mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usize) -> Vec<&'a AddrNode<
 			if (lvl >= 3) && (a.city.lvl < lvl) {
 				st = 1;
 				lvl = a.city.lvl;
+				if res1_max_len < v.len() {
+					res1_max_len = v.len();
+				}
 			} else if (a.city.lvl == lvl) || ((lvl <= 2) && (a.city.lvl <= 2)) {
 				st = 2;
+				if res1_max_len < v.len() {
+					res1_max_len = v.len();
+				}
 			}
 		}}
 		if st == 1 {
@@ -75,9 +83,81 @@ fn choose<'a>(mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usize) -> Vec<&'a AddrNode<
 	}
 	let mut is_std = false;
 	let mut to_recu = false;
-	let mut res1:Vec<Vec<&'a AddrNode<'a>>> = Vec::new();
-	// TODO
-	return Vec::new();
+	let mut res2:Vec<Vec<&'a AddrNode<'a>>> = Vec::new();
+	let mut len = res1.len();
+	let mut flg:usize = 0;
+	let mut to_push:Vec<usize> = Vec::new();
+	while len > 0 { unsafe {
+		len -= 1;
+		let v = res1.remove(len);
+		let a = v.get_unchecked(idx);
+		if a.city.lvl < 2 {
+			flg = 1;
+			to_recu = res1_max_len > idx + 1;
+			break;
+		}
+		if is_std {
+			if a.addr.len() == a.city.name.len() {
+				to_recu = to_recu || (v.len() > idx + 1);
+				to_push.push(len);
+			}
+		} else {
+			if a.addr.len() == a.city.name.len() {
+				res2.clear();
+				to_recu = false;
+				is_std = true;
+			}
+			to_push.push(len);
+			to_recu = to_recu || (v.len() > idx + 1);
+		}
+	}}
+	if flg == 1 {
+		res2 = res1;
+	} else {
+		for idx in to_push {
+			res2.push(res1.remove(idx));
+		}
+	}
+	if to_recu {
+		return choose(addr_list, res2, idx + 1);
+	}
+	if res2.len() == 0 {
+		return Vec::new();
+	}
+	if res2.len() == 1 {
+		return res2.remove(0);
+	}
+	let seed:Vec<&'a AddrNode<'a>> = Vec::new();
+	return res2.iter().fold(seed , |res, l| {
+		let mut flg:i8 = 0;
+		if res.len() == 0 {
+			flg = 1;
+		} else { unsafe {
+			let a1 = res.get_unchecked(idx);
+			let a2 = l.get_unchecked(idx);
+			let mut i1:usize = 10000;
+			let mut i2:usize = 10000;
+			if let Ok(i) = addr_list.binary_search(&a1.addr.to_string()) {
+				i1 = i;
+			}
+			if let Ok(i) = addr_list.binary_search(&a2.addr.to_string()) {
+				i2 = i;
+			}
+			if i1 < i2 {
+				flg = 1;
+			}
+		}}
+		if flg == 1 {
+			let mut r = Vec::new();
+			let mut len:usize = l.len();
+			while len > 0 {
+				len -= 1;
+				r.push(l.remove(len));
+			}
+			return r;
+		}
+		return res;
+	});
 }
 
 fn print_anvv<'a>(vv:&Vec<Vec<&'a AddrNode<'a>>>) {
