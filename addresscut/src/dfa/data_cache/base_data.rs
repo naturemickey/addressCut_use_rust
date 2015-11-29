@@ -10,6 +10,7 @@ pub struct City {
 	pub id:usize,
 	pub pid:usize,
 	pub lvl:i8,
+	pub name:String,
 	pub names:Vec<String>
 }
 
@@ -36,6 +37,7 @@ pub fn all_citys() -> Vec<City> {
 		let mut _pid:usize = 0;
 		let mut _lvl:i8 = 0;
 		let mut _names:Vec<String> = Vec::new();
+		let mut _name:String = "".to_string();
 		for i in 0 .. ss.len() {
 			match ss.get(i) {
 				None => panic!("couldn't be happen!"),
@@ -44,12 +46,13 @@ pub fn all_citys() -> Vec<City> {
 						0 => _id = str_to_int::<usize>(s),
 						1 => _pid = str_to_int::<usize>(s),
 						2 => _lvl = str_to_int::<i8>(s),
+						3 => {_name = s.to_string();_names.push(s.to_string());}
 						_ => _names.push(s.to_string()),
 					}
 				}
 			}
 		}
-		citys.push(City{id:_id, pid:_pid, lvl:_lvl, names:_names});
+		citys.push(City{id:_id, pid:_pid, lvl:_lvl, name:_name, names:_names});
 	}
 
 	citys

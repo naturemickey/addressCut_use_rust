@@ -40,6 +40,46 @@ impl AddressScanner {
 	}
 }
 
+fn choose<'a>(mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usize) -> Vec<&'a AddrNode<'a>> {
+	if vv.len() == 0 {
+		return Vec::new();
+	}
+	if vv.len() == 1 {
+		return vv.remove(0);
+	}
+	let mut len = vv.len();
+	let mut res1:Vec<Vec<&'a AddrNode<'a>>> = Vec::new();
+	while len > 0 {
+		len -= 1;
+		let v = vv.remove(len);
+		let mut lvl:i8 = 20;
+		let mut st:i8 = 0;
+		if v.len() > idx { unsafe {
+			let a = v.get_unchecked(idx);
+			if (lvl >= 3) && (a.city.lvl < lvl) {
+				st = 1;
+				lvl = a.city.lvl;
+			} else if (a.city.lvl == lvl) || ((lvl <= 2) && (a.city.lvl <= 2)) {
+				st = 2;
+			}
+		}}
+		if st == 1 {
+			res1.clear();
+			res1.push(v);
+		} else if st == 2 {
+			res1.push(v);
+		}
+	}
+	if res1.len() == 1 {
+		return res1.remove(0);
+	}
+	let mut is_std = false;
+	let mut to_recu = false;
+	let mut res1:Vec<Vec<&'a AddrNode<'a>>> = Vec::new();
+	// TODO
+	return Vec::new();
+}
+
 fn print_anvv<'a>(vv:&Vec<Vec<&'a AddrNode<'a>>>) {
 	for v in vv {
 		for an in v {
