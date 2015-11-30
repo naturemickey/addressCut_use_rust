@@ -173,19 +173,21 @@ fn break_tree<'a>(tree:&'a Vec<AddrNode<'a>>) -> Vec<Vec<&'a AddrNode<'a>>> {
 	let mut res:Vec<Vec<&'a AddrNode<'a>>> = Vec::new();
 	for i in 0 .. tree.len() { unsafe {
 		let an = tree.get_unchecked(i);
-		let mut vv = break_tree(&an.children);
-		if vv.len() == 0 {
-			let mut v:Vec<&'a AddrNode<'a>> = Vec::new();
-			v.push(an);
-			res.push(v);
-		} else {
-			for v in &mut vv {
-				let mut v1:Vec<&'a AddrNode<'a>> = Vec::with_capacity(1 + v.len());
-				v1.push(an);
-				for n in v {
-					v1.push(n);
+		if an.city.lvl < 4 {
+			let mut vv = break_tree(&an.children);
+			if vv.len() == 0 {
+				let mut v:Vec<&'a AddrNode<'a>> = Vec::new();
+				v.push(an);
+				res.push(v);
+			} else {
+				for v in &mut vv {
+					let mut v1:Vec<&'a AddrNode<'a>> = Vec::with_capacity(1 + v.len());
+					v1.push(an);
+					for n in v {
+						v1.push(n);
+					}
+					res.push(v1);
 				}
-				res.push(v1);
 			}
 		}
 	}}
