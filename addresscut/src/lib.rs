@@ -14,7 +14,7 @@ impl AddressScanner {
 	pub fn new() -> AddressScanner {
 		AddressScanner{dfa: DFA::new()}
 	}
-	pub fn scan(&self, s:&str) -> Vec<String> {
+	pub fn scan(&self, s:&str) -> Address {
 		let chars = s.chars().collect();
 		let addr_list = self.dfa.scan(&chars);
 
@@ -38,8 +38,59 @@ impl AddressScanner {
 		let vv = break_tree(&tree);
 		// print_anvv(&vv);
 		let v = choose(&addr_list, vv, 0);
-		res
+		// for a in v {
+		// 	print!("{} ", a.city.name);
+		// }
+		// println!("===========");
+		fix(v, s, &self.dfa)
 	}
+}
+
+pub struct Address {
+	pub province_address :String, // 省 level 1
+	pub city_address     :String, // 市 level 2
+	pub area_address     :String, // 区 level 3
+	pub town_address     :String, // 镇/街道办 level 4
+	pub original_address :String,
+	pub detail_address   :String,
+}
+
+fn fix<'a>(mut v:Vec<&'a AddrNode<'a>>, s:&str, dfa:&DFA) -> Address {
+	let mut res = Address{
+		province_address : "".to_string(),
+		city_address     : "".to_string(),
+		area_address     : "".to_string(),
+		town_address     : "".to_string(),
+		original_address : s.to_string(),
+		detail_address   : "".to_string(),
+	};
+	if v.len() == 0 {
+		res.detail_address = s.to_string();
+	} else { unsafe {
+		let addr = v.get_unchecked(v.len() - 1);
+		let last_real_addr = &addr.addr;
+		let last_std_addr = &addr.city.name;
+		let mut id = addr.city.id;
+		while id != 0 {
+			let city = &dfa.citys[id - 1];
+			match city.lvl {
+				1 => res.province_address = city.name.to_string(),
+				2 => res.city_address = city.name.to_string(),
+				3 => res.area_address = city.name.to_string(),
+				4 => res.town_address = city.name.to_string(),
+				_ => {}
+			}
+			id = city.pid;
+		}
+		if let Some(i) = s.rfind(last_std_addr) {
+			res.detail_address = s.slice_unchecked(i, s.len()).to_string();
+		} else if let Some(i) = s.rfind(last_real_addr) {
+			res.detail_address = s.slice_unchecked(i, s.len()).to_string();
+		} else {
+			res.detail_address = s.to_string();
+		}
+	}}
+	res
 }
 
 fn choose<'a>(addr_list:&Vec<String>, mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usize) -> Vec<&'a AddrNode<'a>> {
