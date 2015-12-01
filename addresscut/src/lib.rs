@@ -4,7 +4,6 @@ pub mod dfa;
 use self::dfa::DFA;
 use self::dfa::data_cache::base_data::City;
 use std::collections::HashMap;
-use std::result::Result::{Ok, Err};
 
 pub struct AddressScanner {
 	dfa:DFA
@@ -55,7 +54,7 @@ pub struct Address {
 	pub detail_address   :String,
 }
 
-fn fix<'a>(mut v:Vec<&'a AddrNode<'a>>, s:&str, dfa:&DFA) -> Address {
+fn fix<'a>(v:Vec<&'a AddrNode<'a>>, s:&str, dfa:&DFA) -> Address {
 	let mut res = Address{
 		province_address : "".to_string(),
 		city_address     : "".to_string(),
@@ -103,10 +102,10 @@ fn choose<'a>(addr_list:&Vec<String>, mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usi
 	let mut len = vv.len();
 	let mut res1:Vec<Vec<&'a AddrNode<'a>>> = Vec::new();
 	let mut res1_max_len:usize = 0;
+	let mut lvl:i8 = 20;
 	while len > 0 {
 		len -= 1;
 		let v = vv.remove(len);
-		let mut lvl:i8 = 20;
 		let mut st:i8 = 0;
 		if v.len() > idx { unsafe {
 			let a = v.get_unchecked(idx);
