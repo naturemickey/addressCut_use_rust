@@ -36,7 +36,8 @@ impl AddressScanner {
 		let name_map:&HashMap<String, Vec<usize>> = &self.dfa.name_map;
 		let tree = make_tree(&addr_list, citys, name_map);
 		let vv = break_tree(&tree);
-		print_anvv(&vv);
+		// print_anvv(&vv);
+		let v = choose(&addr_list, vv, 0);
 		res
 	}
 }
@@ -127,37 +128,37 @@ fn choose<'a>(addr_list:&Vec<String>, mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usi
 	if res2.len() == 1 {
 		return res2.remove(0);
 	}
-	let seed:Vec<&'a AddrNode<'a>> = Vec::new();
-	return res2.iter().fold(seed , |res, l| {
-		let mut flg:i8 = 0;
+
+	let mut res = Vec::new();
+	let mut len = res2.len();
+	while len > 0 {
+		len -= 1;
+		let v:Vec<&'a AddrNode<'a>> = res2.remove(len);
 		if res.len() == 0 {
-			flg = 1;
-		} else { unsafe {
-			let a1 = res.get_unchecked(idx);
-			let a2 = l.get_unchecked(idx);
-			let mut i1:usize = 10000;
-			let mut i2:usize = 10000;
-			if let Ok(i) = addr_list.binary_search(&a1.addr.to_string()) {
-				i1 = i;
+			res = v;
+		} else {
+			let mut flg:i8 = 0;
+			unsafe {
+				let a1 = res.get_unchecked(idx);
+				let a2 = v.get_unchecked(idx);
+				let mut i1:usize = 10000;
+				let mut i2:usize = 10000;
+				if let Ok(i) = addr_list.binary_search(&a1.addr.to_string()) {
+					i1 = i;
+				}
+				if let Ok(i) = addr_list.binary_search(&a2.addr.to_string()) {
+					i2 = i;
+				}
+				if i1 < i2 {
+					flg = 1;
+				}
 			}
-			if let Ok(i) = addr_list.binary_search(&a2.addr.to_string()) {
-				i2 = i;
+			if flg == 1 {
+				res = v;
 			}
-			if i1 < i2 {
-				flg = 1;
-			}
-		}}
-		if flg == 1 {
-			let mut r = Vec::new();
-			let mut len:usize = l.len();
-			while len > 0 {
-				len -= 1;
-				r.push(l.remove(len));
-			}
-			return r;
 		}
-		return res;
-	});
+	}
+	return res;
 }
 
 fn print_anvv<'a>(vv:&Vec<Vec<&'a AddrNode<'a>>>) {
