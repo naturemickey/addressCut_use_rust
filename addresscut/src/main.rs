@@ -5,11 +5,12 @@ use addresscut::AddressScanner;
 use addresscut::Address;
 
 fn main() {
-    let address = AddressScanner::new().scan("广广东省c福田区ef深圳gh");
-    println!("{}", &address.province_address);
-    println!("{}", &address.city_address);
-    println!("{}", &address.area_address);
-    println!("{}", &address.town_address);
-    println!("{}", &address.original_address);
-    println!("{}", &address.detail_address);
+    let scanner = AddressScanner::new();
+    let address = scanner.scan("四川遂宁市湖北黄冈市蕲春县湖北省黄冈市蕲春县林业局");
+    println!("province_address : {}", &address.province_address);
+    println!("city_address     : {}", &address.city_address);
+    println!("area_address     : {}", &address.area_address);
+    println!("town_address     : {}", &address.town_address);
+    println!("original_address : {}", &address.original_address);
+    println!("detail_address   : {}", &address.detail_address);
 }
