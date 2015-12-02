@@ -140,7 +140,7 @@ fn choose<'a>(addr_list:&Vec<String>, mut vv:Vec<Vec<&'a AddrNode<'a>>>, idx:usi
 	let mut to_push:Vec<usize> = Vec::new();
 	while len > 0 { unsafe {
 		len -= 1;
-		let v = res1.remove(len);
+		let v = res1.get_unchecked(len);
 		let a = v.get_unchecked(idx);
 		if a.city.lvl < 2 {
 			flg = 1;
