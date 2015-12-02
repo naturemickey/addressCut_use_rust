@@ -15,7 +15,7 @@ fn main() {
     let address = scanner.scan("山东省莱芜市莱城区吕花园美食街，品品香茶业");
     let tm3 = time::now();
     println!("scan an address use {} ms.", (tm3.sub(tm2).num_milliseconds()));
-    
+
     println!("province_address : {}", &address.province_address);
     println!("city_address     : {}", &address.city_address);
     println!("area_address     : {}", &address.area_address);
