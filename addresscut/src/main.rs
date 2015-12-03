@@ -9,6 +9,7 @@ use std::path::Path;
 use addresscut::AddressScanner;
 use addresscut::Address;
 use std::ops::Sub;
+use std::result::Result::{Ok, Err};
 
 
 fn main() {
@@ -48,10 +49,49 @@ fn main() {
     println!("读取所有测试地址消耗时长 {} ms.", (tm5.sub(tm4).num_milliseconds()));
     
     let mut addr_list = Vec::with_capacity(250000);
-    for s in lines {
+    for i in 0..lines.len() { unsafe {
         // println!("{}", s);
-        addr_list.push(scanner.scan(s));
-    }
-    let tm5 = time::now();
-    println!("识别所有测试地址消耗时长 {} ms.", (tm5.sub(tm4).num_milliseconds()));
+        addr_list.push(scanner.scan(lines.get_unchecked(i)));
+    }}
+    let tm6 = time::now();
+    println!("识别所有测试地址消耗时长 {} ms.", (tm6.sub(tm5).num_milliseconds()));
+    
+    write_file(addr_list, &lines);
+    let tm7 = time::now();
+    println!("导出所有测试结果消耗时长 {} ms.", (tm7.sub(tm6).num_milliseconds()));
+}
+
+macro_rules! try_write {
+    ($expr:expr) => (match $expr {
+        Ok(_) => {/*do nothing*/},
+        Err(why) => panic!("couldn't write : {}", Error::description(&why)),
+    })
+}
+
+fn write_file(addr_list:Vec<Address>, lines:&Vec<&str>) {
+    let path = Path::new("D://地址切分测试结果.csv");
+    let display = path.display();
+
+    let mut file = match File::create(&path) {
+        Err(why) => panic!("couldn't create {}: {}", display, Error::description(&why)),
+        Ok(file) => file,
+    };
+    try_write!(file.write_all("\"原始地址\"".as_bytes()));
+    try_write!(file.write_all(",\"省(rust)\"".as_bytes()));
+    try_write!(file.write_all(",\"市(rust)\"".as_bytes()));
+    try_write!(file.write_all(",\"区(rust)\"".as_bytes()));
+    try_write!(file.write_all(",\"镇(rust)\"".as_bytes()));
+    try_write!(file.write_all(",\"详细地址(rust)\"\n".as_bytes()));
+    for i in 0 .. lines.len() { unsafe {
+        let a = addr_list.get_unchecked(i);
+        let l = lines.get_unchecked(i);
+        try_write!(file.write_all((("\"".to_string()) + l + "\"").as_bytes()));
+        try_write!(file.write_all(((",\"".to_string()) + &a.province_address + "\"").as_bytes()));
+        try_write!(file.write_all(((",\"".to_string()) + &a.city_address + "\"").as_bytes()));
+        try_write!(file.write_all(((",\"".to_string()) + &a.area_address + "\"").as_bytes()));
+        try_write!(file.write_all(((",\"".to_string()) + &a.town_address + "\"").as_bytes()));
+        try_write!(file.write_all("\n".as_bytes()));
+    }}
+
+    try_write!(file.sync_all());
 }
