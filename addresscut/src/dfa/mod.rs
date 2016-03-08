@@ -12,7 +12,7 @@ struct DfaState {
 
 impl DfaState {
 	fn new(n:String) -> DfaState {
-		DfaState{name:n, path:HashMap::new()}
+		DfaState{name:n, path:HashMap::default()}
 	}
 	fn add_path(&mut self, c:char, name:&str) -> &mut DfaState {
 		let mut res = self.path.entry(c).or_insert(DfaState::new(name.to_string()));

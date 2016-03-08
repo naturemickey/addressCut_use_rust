@@ -7,7 +7,7 @@ use self::base_data::City;
 
 pub fn assemble_data() -> (Vec<City>, HashMap<String, Vec<usize>>) {
 	let ac = base_data::all_citys();
-	let mut name_map = HashMap::new();
+	let mut name_map = HashMap::default();
 	for c in &ac {
 		for name in &c.names {
 			name_map.entry(name.to_string()).or_insert(Vec::new()).push(c.id);
