@@ -56,9 +56,9 @@ fn main() {
     let tm6 = time::now();
     println!("识别所有测试地址消耗时长 {} ms.", (tm6.sub(tm5).num_milliseconds()));
     
-    write_file(addr_list, &lines);
-    let tm7 = time::now();
-    println!("导出所有测试结果消耗时长 {} ms.", (tm7.sub(tm6).num_milliseconds()));
+    // write_file(addr_list, &lines);
+    // let tm7 = time::now();
+    // println!("导出所有测试结果消耗时长 {} ms.", (tm7.sub(tm6).num_milliseconds()));
 }
 
 macro_rules! try_write {
@@ -69,7 +69,7 @@ macro_rules! try_write {
 }
 
 fn write_file(addr_list:Vec<Address>, lines:&Vec<&str>) {
-    let path = Path::new("D://地址切分测试结果.csv");
+    let path = Path::new("地址切分测试结果.csv");
     let display = path.display();
 
     let mut file = match File::create(&path) {
